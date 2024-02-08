@@ -35,7 +35,7 @@ class DNASequence:
 
 class Enzyme:
     def process(self, dna_sequence):
-        return dna_sequence # Basic enzyme does nothing
+        return # Basic enzyme does nothing
     
 class Polymerase(Enzyme):
     def process(self, dna_sequence):
@@ -64,4 +64,9 @@ class CRISPR:
             i = dna_sequence.find_alignment(self.seq)
 
 class CRISPR_Cas9(CRISPR):
-    def __init__():
+    def __init__(self, seq, new_seq):
+        super().__init__(seq)
+        self.new_seq = new_seq
+
+    def process(self, dna_sequence):
+        super().process(dna_sequence)
