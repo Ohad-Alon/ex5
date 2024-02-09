@@ -39,7 +39,7 @@ class Enzyme:
     
 class Polymerase(Enzyme):
     def process(self, dna_sequence):
-        return dna_sequence.get_complement()
+        return DNASequence(dna_sequence.get_complement())
 
 class Mutase(Enzyme):
     def __init__(self, freq):
@@ -50,6 +50,7 @@ class Mutase(Enzyme):
         for i in range(self.freq-1, res_sequence.get_length(), self.freq):
             res_sequence[i] = Complement(res_sequence[i])
         dna_sequence.replace_sequence(res_sequence)
+        return dna_sequence
 
 class CRISPR:
     def __init__(self, seq):
@@ -62,6 +63,7 @@ class CRISPR:
                 dna_sequence.get_sequence()[:i] + ['W'] + dna_sequence.get_sequence()[i+len(self.seq)]:
             )
             i = dna_sequence.find_alignment(self.seq)
+        return dna_sequence
 
 class CRISPR_Cas9(CRISPR):
     def __init__(self, seq, new_seq):
