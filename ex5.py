@@ -64,7 +64,9 @@ class CRISPR:
         i = dna_sequence.find_alignment(self.seq)
         while i != -1:
             dna_sequence.replace_sequence(
-                dna_sequence.get_sequence()[:i] + ['W'] + dna_sequence.get_sequence()[i+len(self.seq):]
+                dna_sequence.get_sequence()[:i] +
+                ['W'] +
+                dna_sequence.get_sequence()[i+len(self.seq):]
             )
             i = dna_sequence.find_alignment(self.seq)
         return dna_sequence
@@ -76,10 +78,24 @@ class CRISPR_Cas9(CRISPR):
 
     def process(self, dna_sequence):
         dna_sequence = super().process(dna_sequence)
+        # Replace every W with new_seq
         i = dna_sequence.find_alignment(['W'])
         while i != -1:
             dna_sequence.replace_sequence(
-                dna_sequence.get_sequence()[:i] + self.new_seq + dna_sequence.get_sequence()[i+len(self.seq):]
+                dna_sequence.get_sequence()[:i] +
+                self.new_seq +
+                dna_sequence.get_sequence()[i+len(self.seq):]
             )
             i = dna_sequence.find_alignment(['W'])
+        # Replace every M with the complement of new_seq
+        j = dna_sequence.find_alignment(['M'])
+        while i != -1:
+            dna_sequence.replace_sequence(
+                dna_sequence.get_sequence()[:i] +
+                self.new_seq +
+                dna_sequence.get_sequence()[i+len(self.seq):]
+            )
+            i = dna_sequence.find_alignment(['W'])
+        
+        
         return dna_sequence
