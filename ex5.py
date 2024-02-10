@@ -14,28 +14,31 @@ def Complement(nucleotide):
 
 class DNASequence:
     def __init__(self, nucleotides):
-        self.nucleotides = nucleotides.copy()
+        if type(nucleotides) == DNASequence:
+            self.m_nucleotides = nucleotides.get_sequence().copy()
+        else: # If string or list
+            self.m_nucleotides = [nucleotide for nucleotide in nucleotides]
 
     def get_sequence(self):
-        return self.nucleotides
+        return self.m_nucleotides
     
     def get_length(self):
-        return len(self.nucleotides)
+        return len(self.m_nucleotides)
     
     def get_complement(self):
-        return [Complement(nucleotide) for nucleotide in self.nucleotides] #1st one-liner
+        return [Complement(nucleotide) for nucleotide in self.m_nucleotides] #1st one-liner
     
     def get_nucleotide(self, index):
-        return self.nucleotides[index]
+        return self.m_nucleotides[index]
     
     def find_alignment(self, seq):
         nucleotide_str = ""
-        for nucleotide in self.nucleotides:
+        for nucleotide in self.m_nucleotides:
             nucleotide_str += nucleotide
         return nucleotide_str.find(seq)
     
     def replace_sequence(self, seq):
-        self.nucleotides = seq.copy() #2nd one-liner
+        self.m_nucleotides = seq.copy() #2nd one-liner
 
 class Enzyme:
     def process(self, dna_sequence):
@@ -89,13 +92,11 @@ class CRISPR_Cas9(CRISPR):
             i = dna_sequence.find_alignment(['W'])
         # Replace every M with the complement of new_seq
         j = dna_sequence.find_alignment(['M'])
-        while i != -1:
+        while j != -1:
             dna_sequence.replace_sequence(
-                dna_sequence.get_sequence()[:i] +
-                self.new_seq +
+                dna_sequence.get_sequence()[:j] +
+                DNASequence(self.new_seq).get_complement() +
                 dna_sequence.get_sequence()[i+len(self.seq):]
             )
-            i = dna_sequence.find_alignment(['W'])
-        
-        
+            j = dna_sequence.find_alignment(['W'])
         return dna_sequence
