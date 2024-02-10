@@ -7,6 +7,10 @@ def Complement(nucleotide):
         return 'G'
     if nucleotide == 'G':
         return 'C'
+    if nucleotide == 'W':
+        return 'M'
+    if nucleotide == 'M':
+        return 'W'
 
 class DNASequence:
     def __init__(self, nucleotides):
@@ -60,7 +64,7 @@ class CRISPR:
         i = dna_sequence.find_alignment(self.seq)
         while i != -1:
             dna_sequence.replace_sequence(
-                dna_sequence.get_sequence()[:i] + ['W'] + dna_sequence.get_sequence()[i+len(self.seq)]:
+                dna_sequence.get_sequence()[:i] + ['W'] + dna_sequence.get_sequence()[i+len(self.seq):]
             )
             i = dna_sequence.find_alignment(self.seq)
         return dna_sequence
@@ -71,4 +75,11 @@ class CRISPR_Cas9(CRISPR):
         self.new_seq = new_seq
 
     def process(self, dna_sequence):
-        super().process(dna_sequence)
+        dna_sequence = super().process(dna_sequence)
+        i = dna_sequence.find_alignment(['W'])
+        while i != -1:
+            dna_sequence.replace_sequence(
+                dna_sequence.get_sequence()[:i] + self.new_seq + dna_sequence.get_sequence()[i+len(self.seq):]
+            )
+            i = dna_sequence.find_alignment(['W'])
+        return dna_sequence
