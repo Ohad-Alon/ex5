@@ -50,6 +50,10 @@ class DNASequence:
         self.nucleotides = seq.copy() #2nd one-liner
 
 class Enzyme:
+    def __init__(self):
+        # empty c'tor
+        pass
+    
     def process(self, dna_sequence):
         return # Basic enzyme does nothing
     
