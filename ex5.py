@@ -14,10 +14,7 @@ def Complement(nucleotide):
 
 class DNASequence:
     def __init__(self, nucleotides):
-        if type(nucleotides) == DNASequence:
-            self.m_nucleotides = nucleotides.get_sequence().copy()
-        else: # If string or list
-            self.m_nucleotides = [nucleotide for nucleotide in nucleotides]
+        self.m_nucleotides = [nucleotide for nucleotide in nucleotides]
 
     def get_sequence(self):
         return self.m_nucleotides
