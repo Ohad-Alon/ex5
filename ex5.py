@@ -45,9 +45,10 @@ class DNASequence:
         # return the index of the beginning of the given sequence
         len = len(seq)
         i = 0
-        while i != -1:
+        while i != self.get_length():
             if self.nucleotides[i:i+len] == list(seq):
                 return i
+            i += 1
         return -1 # if seq doesn't appear in the DNA
     
     def replace_sequence(self, seq):
