@@ -1,3 +1,6 @@
+import json
+import os
+
 def Complement(nucleotide):
     # Arguments:
     #   * nucleotide - the nucleotide
@@ -40,10 +43,12 @@ class DNASequence:
     
     def find_alignment(self, seq):
         # return the index of the beginning of the given sequence
-        nucleotide_str = ''
-        for nucleotide in self.nucleotides:
-            nucleotide_str += nucleotide
-        return nucleotide_str.find(seq)
+        len = len(seq)
+        i = 0
+        while i != -1:
+            if self.nucleotides[i:i+len] == list(seq):
+                return i
+        return -1 # if seq doesn't appear in the DNA
     
     def replace_sequence(self, seq):
         # replaces the sequence of the DNA with a new sequence "seq" 
@@ -53,17 +58,21 @@ class Enzyme:
     def __init__(self):
         # empty c'tor
         pass
-    
+
     def process(self, dna_sequence):
         return # Basic enzyme does nothing
     
 class Polymerase(Enzyme):
+    def __init__(self):
+        super().__init__()
+    
     def process(self, dna_sequence):
         # produces a new DNASequence with the complement sequence
         return DNASequence(dna_sequence.get_complement())
 
 class Mutase(Enzyme):
     def __init__(self, freq):
+        super().__init__()
         self.freq = freq
     
     def process(self, dna_sequence):
@@ -76,6 +85,7 @@ class Mutase(Enzyme):
 
 class CRISPR:
     def __init__(self, seq):
+        super().__init__()
         self.seq = seq
 
     def process(self, dna_sequence):
@@ -117,3 +127,11 @@ class CRISPR_Cas9(CRISPR):
             )
             j = dna_sequence.find_alignment('M')
         return dna_sequence
+
+def processData(dir_path):
+    # store the sequences from DNA.json
+    with open(os.path.join(dir_path,'DNA.json'), 'r') as f:
+        dna_dict = json.load(f)
+    for dna_name, dna_seq in dna_dict.items():
+        dna_dict[dna_name] = DNASequence(dna_seq)
+    # 
