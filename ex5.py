@@ -43,10 +43,11 @@ class DNASequence:
     
     def find_alignment(self, seq):
         # return the index of the beginning of the given sequence
-        len = len(seq)
+        seq_len = len(seq)
         i = 0
         while i != self.get_length():
-            if self.nucleotides[i:i+len] == list(seq):
+            print(i, self.get_length())
+            if self.nucleotides[i:i+seq_len] == list(seq):
                 return i
             i += 1
         return -1 # if seq doesn't appear in the DNA
@@ -84,7 +85,7 @@ class Mutase(Enzyme):
         dna_sequence.replace_sequence(res_sequence)
         return dna_sequence
 
-class CRISPR:
+class CRISPR(Enzyme):
     def __init__(self, seq):
         super().__init__()
         self.seq = seq
@@ -135,4 +136,35 @@ def processData(dir_path):
         dna_dict = json.load(f)
     for dna_name, dna_seq in dna_dict.items():
         dna_dict[dna_name] = DNASequence(dna_seq)
-    # 
+    # performing a certein process on a certein DNA with given parameters read by file, then writing the new DNA dictionary to a new file
+    protocol_list = open(os.path.join(dir_path,'protocol.txt'), 'r')
+    for line in protocol_list:
+        enzyme_command = line.split()
+        if len(enzyme_command) == 0:
+            continue
+        if enzyme_command[1] == 'Polymerase':
+            selected_enzyme = Polymerase()
+        if enzyme_command[1] == 'Mutase':
+            selected_enzyme = Mutase(int(enzyme_command[2]))
+        if enzyme_command[1] == 'CRISPR':
+            selected_enzyme = CRISPR(enzyme_command[2])
+        if enzyme_command[1] == 'CRISPR/Cas9':
+            selected_enzyme = CRISPR_Cas9(enzyme_command[2], enzyme_command[3])
+
+        if enzyme_command[0] in dna_dict:
+            dna_dict[enzyme_command[0]] = selected_enzyme.process(dna_dict[enzyme_command[0]])
+    with open(os.path.join(dir_path,'ModifiedDNA.json'), 'w') as f:
+        for dna_name, dna_seq in dna_dict.items():
+            dna_dict[dna_name] = (dna_dict[dna_name]).get_sequence()
+        json.dump(dna_dict, f)
+    protocol_list.close()
+
+def main(dir_path):
+    processData(dir_path)
+
+# ensuring that main() is only called when the script is run directly
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) != 2:
+        sys.exit(1)
+    main(sys.argv[1])
